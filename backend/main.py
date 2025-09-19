@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import random 
+import heapq
 
 app = FastAPI()
 
@@ -60,6 +61,73 @@ def generate_maze():
 def print_maze(maze):
     for row in maze:
         print("".join("⬛" if cell == 1 else "⬜" for cell in row))
+
+
+def calculate_h_score(node, end):
+    return abs(node[0] - end[0]) + abs(node[1] - end[1])
+
+def calculate_f_score(node, end):
+    x, y = node
+    g_score = 0
+    h_score = 0
+    f_score = 0
+
+    if (node == (1, 1)):
+        g_score = 0
+        h_score = calculate_h_score(node, end)
+
+def a_star_neighbours(current):
+    neighbors = []
+    x, y = current
+
+    if maze[x - 1][y] == 0:
+        neighbors.append((x - 1, y))
+        
+    if maze[x + 1][y] == 0:
+        neighbors.append((x + 1, y))
+            
+    if maze[x][y - 1] == 0:
+        neighbors.append((x, y - 1))
+                
+    if maze[x][y + 1] == 0:
+        neighbors.append((x, y + 1))
+
+    return neighbors
+
+
+def a_star():
+    start = (1, 1)
+    end = (rows - 2, cols - 2)
+
+    open_set = []
+    heapq.heappush(open_set, (0, start))
+
+    g_score = {strart: 0}
+    f_score = (start: calculate_f_score(start, end))
+    came_from = {}
+
+    while open_set:
+        _, current = heapq.heappop(open_set)
+
+        if current == end:
+            path = []
+            while current in came_from:
+                path.append(current)
+                current = came_from[current]
+            path.append(start)
+            return path[::-1]
+
+        for neighbors in a_star_neighbours(current):
+            tentative_g = g_score[current] + 1
+
+            if tentative_g < g_score.get(neighbor, float("inf")):
+                came_from[neighbor] = current
+                g_score[neighbor] = tentative_g
+                f_score[neighbor] = tentative_g + calculate_h_score(neighbor, end)
+                heapq.heappush(open_set, (f_score[neighbor], neighbor))
+
+    return None
+
 
 generate_maze()
 print_maze(maze)
