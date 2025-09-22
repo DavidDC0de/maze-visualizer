@@ -12,7 +12,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 maze = []
-rows, cols = 11, 11
+rows, cols = 21, 21
 data = {"maze": maze}
 
 def generate_grid():
@@ -66,15 +66,6 @@ def print_maze(maze):
 def calculate_h_score(node, end):
     return abs(node[0] - end[0]) + abs(node[1] - end[1])
 
-def calculate_f_score(node, end):
-    x, y = node
-    g_score = 0
-    h_score = 0
-    f_score = 0
-
-    if (node == (1, 1)):
-        g_score = 0
-        h_score = calculate_h_score(node, end)
 
 def a_star_neighbours(current):
     neighbors = []
@@ -102,8 +93,8 @@ def a_star():
     open_set = []
     heapq.heappush(open_set, (0, start))
 
-    g_score = {strart: 0}
-    f_score = (start: calculate_f_score(start, end))
+    g_score = {start: 0}
+    f_score = {start: calculate_h_score(start, end)}
     came_from = {}
 
     while open_set:
@@ -117,20 +108,21 @@ def a_star():
             path.append(start)
             return path[::-1]
 
-        for neighbors in a_star_neighbours(current):
+        for neighbour in a_star_neighbours(current):
             tentative_g = g_score[current] + 1
 
-            if tentative_g < g_score.get(neighbor, float("inf")):
-                came_from[neighbor] = current
-                g_score[neighbor] = tentative_g
-                f_score[neighbor] = tentative_g + calculate_h_score(neighbor, end)
-                heapq.heappush(open_set, (f_score[neighbor], neighbor))
+            if tentative_g < g_score.get(neighbour, float("inf")):
+                came_from[neighbour] = current
+                g_score[neighbour] = tentative_g
+                f_score[neighbour] = tentative_g + calculate_h_score(neighbour, end)
+                heapq.heappush(open_set, (f_score[neighbour], neighbour))
 
     return None
 
 
 generate_maze()
 print_maze(maze)
+print(a_star())
 @app.get("/get-maze")
 def get_data():
     return data
