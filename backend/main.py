@@ -11,18 +11,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-maze = []
-rows, cols = 21, 21
-data = {"maze": maze}
 
-def generate_grid():
+rows, cols = 41, 41
+
+
+def generate_grid(maze):
     for i in range(rows):
         maze.append([])
         for j in range(cols):
             maze[i].append(1)
     maze[1][1] = 0
 
-def get_unvisited_neighbors(x, y):
+def get_unvisited_neighbors(maze, x, y):
     neighbors = []
     if (x > 1) and maze[x - 2][y] == 1:
         neighbors.append((x - 2, y))
@@ -40,13 +40,14 @@ def get_unvisited_neighbors(x, y):
 
 
 def generate_maze():
-    generate_grid()
+    maze = []
+    generate_grid(maze)
     start = (1, 1)
     stack = [start]
 
     while stack:
         x, y = stack[-1]
-        neighbors = get_unvisited_neighbors(x, y)
+        neighbors = get_unvisited_neighbors(maze, x, y)
 
         if neighbors:
             new_x, new_y = random.choice(neighbors)
@@ -57,17 +58,14 @@ def generate_maze():
 
         else:
             stack.pop()
-
-def print_maze(maze):
-    for row in maze:
-        print("".join("⬛" if cell == 1 else "⬜" for cell in row))
+    return maze
 
 
 def calculate_h_score(node, end):
     return abs(node[0] - end[0]) + abs(node[1] - end[1])
 
 
-def a_star_neighbours(current):
+def a_star_neighbours(maze, current):
     neighbors = []
     x, y = current
 
@@ -86,7 +84,7 @@ def a_star_neighbours(current):
     return neighbors
 
 
-def a_star():
+def a_star(maze):
     start = (1, 1)
     end = (rows - 2, cols - 2)
 
@@ -108,7 +106,7 @@ def a_star():
             path.append(start)
             return path[::-1]
 
-        for neighbour in a_star_neighbours(current):
+        for neighbour in a_star_neighbours(maze, current):
             tentative_g = g_score[current] + 1
 
             if tentative_g < g_score.get(neighbour, float("inf")):
@@ -119,12 +117,26 @@ def a_star():
 
     return None
 
+def show_solved_path(maze, path): #changes the maze to show the solved path
+    solved_path = 2
+    for node in path:
+        x, y = node
+        maze[x][y] = solved_path
 
-generate_maze()
-print_maze(maze)
-print(a_star())
+    return maze
+
+
 @app.get("/get-maze")
-def get_data():
-    return data
+def get_unsolved_maze():
+    global maze
+    maze = generate_maze()
+    return {"maze": maze}
+
+@app.get("/get-solved-maze")
+def get_solved_maze():
+    global maze
+    path = a_star(maze)
+    solved_maze = show_solved_path(maze, path)
+    return  {"maze": solved_maze}
 
 

@@ -1,0 +1,51 @@
+:root {
+    background-color: rgba(188, 152, 108, 0.932);
+}
+
+.maze {
+    display: flex;
+    justify-content: center;
+    grid-template-columns: repeat(auto-fill, 20px);
+    
+}
+
+.cell {
+    width: 20px;
+    height: 20px;
+}
+
+.wall {
+    background-color: black;
+}
+
+.path {
+    background-color: beige;
+}
+
+.solved {
+    background-color: brown;
+}
+
+.generate_button, .solve_button {
+    font-weight: bold;
+    font-size: medium;
+    background-color: brown;
+    border: solid;
+    border-width: 5px;
+    border-color: black;
+    width: 120px;
+    height: 60px;
+    border-radius: 25px;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    gap: 20px;
+}
+
+.text_title {
+    font-family: Arial, Helvetica, sans-serif;
+}

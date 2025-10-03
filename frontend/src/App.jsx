@@ -1,21 +1,33 @@
 import { useState, useEffect } from 'react'
+import { fetchMaze } from './utils/api' 
+import MazeGrid from "./components/MazeGrid";
+import Controls from "./components/Controls"
 
 
 function App() {
-  const [message, setMessage] = useState("");
+  const [maze, setMaze] = useState([]);  //holds the maze data from the backend 
+
+  
+  async function getMaze() {  
+    const data = await fetchMaze("unsolved");  
+    setMaze(data);  
+  }
+
+  async function getSolvedMaze() {  
+    const data = await fetchMaze("solved");  
+    setMaze(data);  
+  }
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/get-data")
-    .then((res) => res.json())
-    .then((data) => setMessage(data.message))
-    .catch((err) => console.log(err));
-  }, []);
+    getMaze();
+  }, [])
+  
 
-
-  return (
+  return ( 
     <div>
-      <h1>Message from Python:</h1>
-      <p>{message}</p>
+      
+      <Controls onSolve={getSolvedMaze} onGenerate={getMaze}/>
+      <MazeGrid maze={maze} /> 
     </div>
   );
 }
