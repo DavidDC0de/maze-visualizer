@@ -30,7 +30,11 @@ npm run dev
 ```
 ## 📸 Screenshots
 ### Maze Generation
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/fff1699b-2dea-4a9a-8591-c56d9ae3d6ef" />
+
 ### Solved Maze
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/a418281d-b73e-44b8-b466-105a958f906f" />
+
 
 ## 📖 Tech Stack
 - Python (FastAPI) → backend + maze generation + pathfinding
